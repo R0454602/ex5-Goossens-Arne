@@ -80,7 +80,7 @@ app.post("/locatie", function (request, response) {
     "use strict";
     var locatie = request.body; 
 
-    var errors = validator.fieldsNotEmpty(locatie, "Naam", "Stad", "Adres", "Capaciteit");
+    var errors = validator.fieldsNotEmpty(locatie, "Lokaal", "Campus","Capaciteit");
     if (errors) {
         response.status(400).send({msg: "Following field(s) are mandatory:" + errors.concat()});
         return;
@@ -88,7 +88,7 @@ app.post("/locatie", function (request, response) {
 
     var existinglocatie = dallocatie.findlocatie(locatie.Naam);
     if (existinglocatie) {
-        response.status(409).send({msg: "Naam moet uniek zijn, deze bestaat al", link: "../Locations/" + existingLocation.id});
+        response.status(409).send({msg: "id must be unique, it's already registered", link: "../locaties/" + existinglocatie.id});
         return;
     }
     locatie.id = locatie.Naam;
