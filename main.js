@@ -60,6 +60,41 @@ app.post("/devices", function(request, response) {
 });
 
 
+// opvangen van een GET op /locatie
+app.get("/locatie", function (request, response) {
+    "use strict";
+    response.send(dallocatie.listAlllocatie());
+});
+
+app.get("/locatie/:id", function (request, response) {
+    "use strict";
+    var locatie = dallocatie.findlocatie(request.params.id);
+    if (locatie) {
+        response.send(locatie);
+    } else {
+        response.status(404).send();
+    }
+});
+
+app.post("/locatie", function (request, response) {
+    "use strict";
+    var locatie = request.body; 
+
+    var errors = validator.fieldsNotEmpty(locatie, "Naam", "Stad", "Adres", "Capaciteit");
+    if (errors) {
+        response.status(400).send({msg: "Following field(s) are mandatory:" + errors.concat()});
+        return;
+    }
+
+    var existinglocatie = dallocatie.findlocatie(locatie.Naam);
+    if (existinglocatie) {
+        response.status(409).send({msg: "Naam moet uniek zijn, deze bestaat al", link: "../Locations/" + existingLocation.id});
+        return;
+    }
+    locatie.id = locatie.Naam;
+    dalLocations.saveLocation(locatie);
+    response.status(201).location("../locatie/" + locatie.id).send();
+});
 
 
 app.listen(456789);
