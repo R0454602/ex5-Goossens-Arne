@@ -96,6 +96,43 @@ app.post("/locatie", function (request, response) {
     response.status(201).location("../locatie/" + locatie.id).send();
 });
 
+// opvangen van een GET op /les
+app.get("/les", function (request, response) {
+    "use strict";
+    response.send(dallocatie.listAllles());
+});
+
+app.get("/les/:id", function (request, response) {
+    "use strict";
+    var les = dallocatie.findles(request.params.id);
+    if (les) {
+        response.send(les);
+    } else {
+        response.status(404).send();
+    }
+});
+
+app.post("/les", function (request, response) {
+    "use strict";
+    var les = request.body; 
+
+    var errors = validator.fieldsNotEmpty(les, "Vak", "Docent","Duur");
+    if (errors) {
+        response.status(400).send({msg: "Following field(s) are mandatory:" + errors.concat()});
+        return;
+    }
+
+    var existingles = dallocatie.findles(les.Naam);
+    if (existingles) {
+        response.status(409).send({msg: "id must be unique, it's already registered", link: "../les/" + existingles.id});
+        return;
+    }
+    les.id = les.Naam;
+    dalLocations.saveLocation(les);
+    response.status(201).location("../les/" + les.id).send();
+});
+
+
 
 app.listen(456789);
 console.log("Server started");
