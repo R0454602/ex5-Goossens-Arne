@@ -1,7 +1,7 @@
 var express = require("express");
 var parser = require("body-parser");
 
-var dal = require("./storage.js");
+var dal = require("./devices.js");
 var validation = require("./validate.js");
 
 var app = express();
